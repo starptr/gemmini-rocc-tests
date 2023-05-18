@@ -1,7 +1,7 @@
 include $(abs_top_srcdir)/Makefrag
 
 tests = \
-	conv1d_ans \
+	conv2d_ans \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
