@@ -10,11 +10,11 @@
 #endif
 #include "include/gemmini_testutils.h"
 
-#define LEN 100000
+#define LEN 1000
 #define SLIDES (LEN - 1)
 
-void naive_conv1d(elem_t input[0][LEN],
-		elem_t output[0][SLIDES]) {
+void naive_conv1d(elem_t input[2][LEN],
+		elem_t output[1][SLIDES]) {
   for (int i = 0; i < LEN; i++) {
     input[0][i] = i;
   }
@@ -36,7 +36,7 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t In[1][LEN];
+  static elem_t In[2][LEN];
   static elem_t Out[1][SLIDES];
 
   uint64_t start_cpu = read_cycles();
@@ -44,9 +44,11 @@ int main() {
   uint64_t end_cpu = read_cycles();
   printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
 
-  static elem_t weights[1][2];
+  static elem_t weights[2][2];
   weights[0][0] = 1;
   weights[0][1] = 1;
+  weights[1][0] = 0;
+  weights[1][1] = 0;
 
   uint64_t start_g = read_cycles();
   tiled_conv_auto(
