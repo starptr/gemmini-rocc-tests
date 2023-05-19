@@ -10,17 +10,22 @@
 #endif
 #include "include/gemmini_testutils.h"
 
-#define LEN 100000
+#define LEN 100
 #define SLIDES (LEN - 1)
 
-void naive_conv1d(elem_t input[0][LEN],
-		elem_t output[0][SLIDES]) {
+void naive_conv1d(elem_t input[LEN][LEN],
+		elem_t output[SLIDES][SLIDES]) {
   for (int i = 0; i < LEN; i++) {
-    input[0][i] = i;
+    for (int j = 0; j < LEN; j++) {
+      input[i][j] = j;
+    }
   }
   
   for (int i = 0; i < SLIDES; i++) {
-    output[0][i] = input[0][i] + input[0][i+1];
+    for (int j = 0; j < SLIDES; j++) {
+      output[i][j] = input[i][j] + input[i][j+1]
+	           + input[i+1][j] + input[i+1][j+1];
+    }
   }
 }
 
@@ -36,22 +41,24 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t In[1][LEN];
-  static elem_t Out[1][SLIDES];
+  static elem_t In[LEN][LEN];
+  static elem_t Out[SLIDES][SLIDES];
 
   uint64_t start_cpu = read_cycles();
   naive_conv1d(In, Out);
   uint64_t end_cpu = read_cycles();
   printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
 
-  static elem_t weights[1][2];
+  static elem_t weights[2][2];
   weights[0][0] = 1;
   weights[0][1] = 1;
+  weights[1][0] = 1;
+  weights[1][1] = 1;
 
   uint64_t start_g = read_cycles();
   tiled_conv_auto(
-		  1, 1, LEN, 1,
-		  1, 1, SLIDES,
+		  1, LEN, LEN, 1,
+		  1, SLIDES, SLIDES,
 		  1, 1, 1, 0, 2,
 		  false, false, false, false, false,
 		  (elem_t*)In,
