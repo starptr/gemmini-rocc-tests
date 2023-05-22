@@ -1,6 +1,7 @@
 include $(abs_top_srcdir)/Makefrag
 
 tests = \
+	conv1d_2_synth \
 	conv1d_synth \
 	conv1d_ideal \
 	conv1d_ans \
