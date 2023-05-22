@@ -75,8 +75,8 @@ int main() {
   //elem_t In[DIM][DIM];
   //elem_t Out[DIM][DIM];
 
-  printMatrix(In);
-  printMatrix(Out);
+  //printMatrix(In);
+  //printMatrix(Out);
 
   //elem_t Identity[DIM][DIM];
   //for (size_t i = 0; i < DIM; i++)
