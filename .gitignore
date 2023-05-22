@@ -5,4 +5,4 @@ autom4te.cache
 configure
 .ipynb_checkpoints
 *.pyc
-bareMetalC/conv1d_synth.c
+bareMetalC/*_synth.c
