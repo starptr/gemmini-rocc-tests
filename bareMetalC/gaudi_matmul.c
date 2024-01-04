@@ -9,13 +9,6 @@
 #include "include/gemmini_testutils.h"
 #define LEN 16
 
-void print1d(elem_t Out[1][SLIDES]) {
-  for (int j = 0; j < SLIDES; j++) {
-    printf("%d, ", Out[0][j]);
-  }
-  printf("\n");
-}
-
 void naive_matmul(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN]) {
   for (int i = 0; i < LEN; i++) {
     for (int j = 0; j < LEN; j++) {
