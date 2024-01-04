@@ -29,7 +29,7 @@ void naive_matmul(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN]
 void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN]) {
   tiled_matmul_auto(
     LEN, LEN, LEN,
-    (elem_t*) Left, (elem_t*) Right, (elem_t*) Out, NULL,
+    (elem_t*) left, (elem_t*) right, NULL, (elem_t*)out,
     LEN, LEN, LEN, LEN,
     1, 1, 1,
     0, 1, 0, false,
@@ -37,15 +37,6 @@ void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN])
     false, 0,
     0,
     WS);
-  //1, 1, LEN, 1,
-  //1, 1, SLIDES,
-  //1, 1, 1, 0, KER_LEN,
-  //false, false, false, false, false,
-  //(elem_t*)In,
-  //(elem_t*)weights,
-  //NULL,
-  //(elem_t*)Out,
-  //0, 0, 0, 0, 0, WS);
 }
 int main() {
 #ifndef BAREMETAL
@@ -72,7 +63,7 @@ int main() {
   }
 
   uint64_t start_cpu = read_cycles();
-  naive_conv1d(Left, Right, Out);
+  naive_matmul(Left, Right, Out);
   uint64_t end_cpu = read_cycles();
   printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
 
