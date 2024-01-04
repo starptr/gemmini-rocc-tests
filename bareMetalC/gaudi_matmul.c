@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 5
+#define LEN 16
 
 void print1d(elem_t Out[1][SLIDES]) {
   for (int j = 0; j < SLIDES; j++) {
