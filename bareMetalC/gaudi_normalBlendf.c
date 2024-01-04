@@ -22,7 +22,7 @@ void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem
         LEN, LEN,
         opacity, 1 - opacity,
         1,
-        active[0], base[0]
+        active[0], base[0],
         out[0],
         false,
         WS
