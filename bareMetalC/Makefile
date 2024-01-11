@@ -3,6 +3,7 @@ include $(abs_top_srcdir)/Makefrag
 tests = \
 	gaudi_matmul \
 	gaudi_normalBlendf \
+	gaudi_normalBlend8 \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
