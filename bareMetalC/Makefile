@@ -5,6 +5,7 @@ tests = \
 	gaudi_normalBlendf \
 	gaudi_normalBlend8 \
 	gaudi_linearBurn8 \
+	gaudi_linearDodge8 \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
