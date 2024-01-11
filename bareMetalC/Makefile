@@ -7,6 +7,7 @@ tests = \
 	gaudi_linearBurn8 \
 	gaudi_linearDodge8 \
 	gaudi_multiplyBlend8 \
+	gaudi_screenBlend8 \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
