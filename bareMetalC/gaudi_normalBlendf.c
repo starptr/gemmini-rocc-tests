@@ -16,8 +16,8 @@ void naive_normalBlendf(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t o
 }
 
 void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem_t out[LEN][LEN]) {
-    //const elem_t* ao = GEMMINI_SCALE(active, opacity);
-    //const elem_t* bo = GEMMINI_SCALE(base, 1 - opacity);
+    const elem_t* ao = GEMMINI_ACC_SCALE(active, opacity);
+    const elem_t* bo = GEMMINI_ACC_SCALE(base, 1 - opacity);
     tiled_resadd_auto(
         LEN, LEN,
         opacity, 1 - opacity,
