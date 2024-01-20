@@ -1,16 +1,16 @@
 include $(abs_top_srcdir)/Makefrag
 
 tests = \
-	gaudi_matmul \
-	gaudi_normalBlendf \
-	gaudi_normalBlend8 \
-	gaudi_linearBurn8 \
-	gaudi_linearDodge8 \
-	gaudi_multiplyBlend8 \
-	gaudi_screenBlend8 \
-	gaudi_elemwise_mul \
-	gaudi_rmsnorm_part1 \
-	gaudi_rmsnorm_part2 \
+	cav_matmul \
+	cav_normalBlendf \
+	cav_normalBlend8 \
+	cav_linearBurn8 \
+	cav_linearDodge8 \
+	cav_multiplyBlend8 \
+	cav_screenBlend8 \
+	cav_elemwise_mul \
+	cav_rmsnorm_part1 \
+	cav_rmsnorm_part2 \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
