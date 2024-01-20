@@ -10,6 +10,7 @@ tests = \
 	gaudi_screenBlend8 \
 	gaudi_elemwise_mul \
 	gaudi_rmsnorm_part1 \
+	gaudi_rmsnorm_part2 \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
