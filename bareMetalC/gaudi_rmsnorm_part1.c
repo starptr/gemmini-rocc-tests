@@ -9,11 +9,16 @@
 #include "include/gemmini_testutils.h"
 #define LEN 16
 
-void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN]) {
-  // 1D ewise mul
+void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t* out) {
+  static elem_t interm[LEN][LEN];
   for (int i = 0; i < LEN; i++) {
-    out[0][i] = left[0][i] * right[0][i];
+    for (int j = 0; j < LEN; j++) {
+      interm[i][j] = left[i][j] * right[i][j];
+    }
   }
+  // reduce_sum
+  tiled_global_average(interm[0], out,
+    1, 1, LEN, 1);
 }
 int main() {
 #ifndef BAREMETAL
@@ -29,7 +34,7 @@ int main() {
 
   static elem_t Left[LEN][LEN];
   static elem_t Right[LEN][LEN];
-  static elem_t Out[LEN][LEN];
+  static elem_t Out;
   int v = 0;
   for (int i = 0; i < LEN; i++) {
     for (int j = 0; j < LEN; j++) {
@@ -40,7 +45,7 @@ int main() {
   }
 
   uint64_t start_g = read_cycles();
-  runner(Left, Right, Out);
+  runner(Left, Right, &Out);
   uint64_t end_g = read_cycles();
   printf("Hardware conv took %llu cycles\n", end_g - start_g);
 
