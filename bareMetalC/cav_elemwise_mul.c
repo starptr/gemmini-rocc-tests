@@ -39,6 +39,16 @@ int main() {
     }
   }
 
+  // trigger cycle count
+    tiled_resadd_auto(
+        1, 1,
+        1, 1,
+        1,
+        Left[0], Right[0],
+        Out[0],
+        false,
+        WS
+    );
   uint64_t start_g = read_cycles();
   runner(Left, Right, Out);
   uint64_t end_g = read_cycles();
