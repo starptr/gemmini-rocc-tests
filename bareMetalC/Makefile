@@ -15,6 +15,7 @@ tests = \
 	cav_softmax1 \
 	cav_softmax2 \
 	cav_softmax3 \
+	cav_softmax4 \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
