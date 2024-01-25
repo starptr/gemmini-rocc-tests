@@ -12,6 +12,7 @@ tests = \
 	cav_rmsnorm_part1 \
 	cav_rmsnorm_part2 \
 	cav_silu \
+	cav_softmax1 \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
