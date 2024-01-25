@@ -11,6 +11,7 @@ tests = \
 	cav_elemwise_mul \
 	cav_rmsnorm_part1 \
 	cav_rmsnorm_part2 \
+	cav_silu \
 	mvin_mvout \
 	mvin_mvout_zeros \
 	mvin_mvout_stride \
