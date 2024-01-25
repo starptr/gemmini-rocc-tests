@@ -9,12 +9,12 @@
 #include "include/gemmini_testutils.h"
 #define LEN 16
 
-elem_t uninterp_sqrt(elem_t x) { return x; }
+#include <math.h>
 
 void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN], elem_t ss) {
   elem_t interm = ss / LEN; // sizeof in gen
   interm = interm + 1;
-  interm = uninterp_sqrt(interm);
+  interm = sqrt(interm);
   interm = 1 / interm;
 
   static elem_t interm2[LEN][LEN];
