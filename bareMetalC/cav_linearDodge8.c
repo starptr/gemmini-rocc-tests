@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 315
 
 elem_t muldiv255(elem_t a, elem_t b) {
     return (a * b) / 255;

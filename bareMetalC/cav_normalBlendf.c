@@ -7,13 +7,14 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 400
+#define SIZE 160000
 
-void naive_normalBlendf(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem_t out[LEN][LEN]) {
-    for (int i = 0; i < LEN; i++) {
-        out[0][i] = opacity * active[0][i] + (1 - opacity) * base[0][i];
-    }
-}
+//void naive_normalBlendf(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem_t out[LEN][LEN]) {
+//    for (int i = 0; i < LEN; i++) {
+//        out[0][i] = opacity * active[0][i] + (1 - opacity) * base[0][i];
+//    }
+//}
 
 void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem_t out[LEN][LEN]) {
     const elem_t* ao = GEMMINI_ACC_SCALE(active, opacity);
@@ -49,10 +50,10 @@ int main() {
     Right[0][i] = i;
   }
 
-  uint64_t start_cpu = read_cycles();
-  naive_normalBlendf(Left, Right, opacity, Out);
-  uint64_t end_cpu = read_cycles();
-  printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
+  //uint64_t start_cpu = read_cycles();
+  //naive_normalBlendf(Left, Right, opacity, Out);
+  //uint64_t end_cpu = read_cycles();
+  //printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
 
   uint64_t start_g = read_cycles();
   runner(Left, Right, opacity, Out);

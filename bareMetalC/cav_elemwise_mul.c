@@ -7,9 +7,9 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 50000
 
-void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN]) {
+void runner(elem_t left[1][LEN], elem_t right[1][LEN], elem_t out[1][LEN]) {
   // 1D ewise mul
   for (int i = 0; i < LEN; i++) {
     out[0][i] = left[0][i] * right[0][i];
@@ -27,16 +27,14 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t Left[LEN][LEN];
-  static elem_t Right[LEN][LEN];
-  static elem_t Out[LEN][LEN];
+  static elem_t Left[1][LEN];
+  static elem_t Right[1][LEN];
+  static elem_t Out[1][LEN];
   int v = 0;
   for (int i = 0; i < LEN; i++) {
-    for (int j = 0; j < LEN; j++) {
-      Left[i][j] = v;
-      Right[i][j] = v;
+      Left[0][i] = v;
+      Right[0][i] = v;
       v++;
-    }
   }
 
   // trigger cycle count

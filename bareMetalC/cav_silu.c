@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 20000
 
 #include <math.h>
 
@@ -506,7 +506,7 @@ elem_t tmp_exp(elem_t x) {
   return x;
 }
 
-void runner(elem_t left[LEN], elem_t out[LEN], elem_t until) {
+void runner(elem_t left[LEN], elem_t out[LEN], int until) {
   for (int i = 0; i < until; i++) {
     out[i] = 1 / (1 + my_exp(left[i])) * left[i];
   }
@@ -523,18 +523,16 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t Left[LEN][LEN];
-  static elem_t Right[LEN][LEN];
-  static elem_t Out[LEN][LEN];
+  static elem_t Left[1][LEN];
+  static elem_t Right[1][LEN];
+  static elem_t Out[1][LEN];
   int v = 0;
   for (int i = 0; i < LEN; i++) {
-    for (int j = 0; j < LEN; j++) {
-      Left[i][j] = v;
-      Right[i][j] = v;
+      Left[0][i] = v;
+      Right[0][i] = v;
       v++;
-    }
   }
-  elem_t until = LEN;
+  int until = LEN;
 
   // trigger cycle count
     tiled_resadd_auto(

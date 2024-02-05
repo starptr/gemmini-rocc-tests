@@ -7,14 +7,18 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 20000
 
-void runner(elem_t left[LEN][LEN], elem_t max_pos, elem_t sum, elem_t out[LEN][LEN]) {
+void runner(elem_t left[1][LEN], int max_pos, elem_t sum, elem_t out[1][LEN]) {
     // take is a no-op
     int size = max_pos;
 
+    for (int i = 0; i < LEN; i++) {
+      out[0][i] = left[0][i] * sum;
+    }
+
     // scalar op
-    out = GEMMINI_ACC_SCALE(left, sum);
+    //out = GEMMINI_ACC_SCALE(out, sum);
 }
 int main() {
 #ifndef BAREMETAL
@@ -28,16 +32,14 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t TLeft[LEN][LEN];
-  static elem_t TRight[LEN][LEN];
-  static elem_t TOut[LEN][LEN];
+  static elem_t TLeft[1][LEN];
+  static elem_t TRight[1][LEN];
+  static elem_t TOut[1][LEN];
   int v = 0;
   for (int i = 0; i < LEN; i++) {
-    for (int j = 0; j < LEN; j++) {
-      TLeft[i][j] = v;
-      TRight[i][j] = v;
+      TLeft[0][i] = v;
+      TRight[0][i] = v;
       v++;
-    }
   }
 
   // trigger cycle count
@@ -51,10 +53,21 @@ int main() {
         WS
     );
 
-  static elem_t Left[LEN][LEN];
-  static elem_t MaxPos;
-  static elem_t Sum;
-  static elem_t Out[LEN][LEN];
+  static elem_t Left[1][LEN];
+  static int MaxPos = LEN;
+  static elem_t Sum = 17;
+  static elem_t Out[1][LEN];
+
+  // trigger cycle count
+    tiled_resadd_auto(
+        1, 1,
+        1, 1,
+        1,
+        Left[0], Left[0],
+        Out[0],
+        false,
+        WS
+    );
 
   uint64_t start_g = read_cycles();
   runner(Left, MaxPos, Sum, Out);

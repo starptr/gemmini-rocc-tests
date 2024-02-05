@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 400
 
 void naive_matmul(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN]) {
   for (int i = 0; i < LEN; i++) {
@@ -21,9 +21,9 @@ void naive_matmul(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN]
 
 void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN]) {
   tiled_matmul_auto(
-    LEN, LEN, LEN,
+    LEN, LEN, 1,
     (elem_t*) left, (elem_t*) right, NULL, (elem_t*)out,
-    LEN, LEN, LEN, LEN,
+    1, LEN, LEN, LEN,
     1, 1, 1,
     0, 1, 0, false,
     false, false,
@@ -55,10 +55,10 @@ int main() {
     }
   }
 
-  uint64_t start_cpu = read_cycles();
-  naive_matmul(Left, Right, Out);
-  uint64_t end_cpu = read_cycles();
-  printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
+  //uint64_t start_cpu = read_cycles();
+  //naive_matmul(Left, Right, Out);
+  //uint64_t end_cpu = read_cycles();
+  //printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
 
   uint64_t start_g = read_cycles();
   runner(Left, Right, Out);

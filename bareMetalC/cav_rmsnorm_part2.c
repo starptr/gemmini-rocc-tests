@@ -7,23 +7,20 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 20000
 
 #include <math.h>
 
-void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t out[LEN][LEN], elem_t ss) {
+void runner(elem_t left[1][LEN], elem_t right[1][LEN], elem_t out[1][LEN], elem_t ss) {
   elem_t interm = ss / LEN; // sizeof in gen
   interm = interm + 1;
   interm = sqrt(interm);
   interm = 1 / interm;
 
-  static elem_t interm2[LEN][LEN];
   for (int i = 0; i < LEN; i++) {
-    for (int j = 0; j < LEN; j++) {
-      interm2[i][j] = left[i][j] * right[i][j];
-    }
+      out[0][i] = left[0][i] * right[0][i];
   }
-  out = GEMMINI_ACC_SCALE(interm2, interm);
+  out = GEMMINI_ACC_SCALE(out, interm);
 }
 int main() {
 #ifndef BAREMETAL
@@ -37,19 +34,27 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t Left[LEN][LEN];
-  static elem_t Right[LEN][LEN];
-  static elem_t Out[LEN][LEN];
+  static elem_t Left[1][LEN];
+  static elem_t Right[1][LEN];
+  static elem_t Out[1][LEN];
   int v = 0;
   for (int i = 0; i < LEN; i++) {
-    for (int j = 0; j < LEN; j++) {
-      Left[i][j] = v;
-      Right[i][j] = v;
+      Left[0][i] = v;
+      Right[0][i] = v;
       v++;
-    }
   }
   elem_t ss = v;
 
+  // trigger cycle count
+    tiled_resadd_auto(
+        1, 1,
+        1, 1,
+        1,
+        Left[0], Right[0],
+        Out[0],
+        false,
+        WS
+    );
   uint64_t start_g = read_cycles();
   runner(Left, Right, Out, ss);
   uint64_t end_g = read_cycles();

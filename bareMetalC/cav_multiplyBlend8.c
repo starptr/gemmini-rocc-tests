@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 420
 
 elem_t muldiv255(elem_t a, elem_t b) {
     return (a * b) / 255;
@@ -54,10 +54,10 @@ int main() {
     }
   }
 
-  uint64_t start_cpu = read_cycles();
-  naive_multiplyBlend8(Left, Right, opacity, Out);
-  uint64_t end_cpu = read_cycles();
-  printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
+  //uint64_t start_cpu = read_cycles();
+  //naive_multiplyBlend8(Left, Right, opacity, Out);
+  //uint64_t end_cpu = read_cycles();
+  //printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
 
   uint64_t start_g = read_cycles();
   runner(Left, Right, opacity, Out);

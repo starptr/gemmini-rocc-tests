@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 400
 
 double EXP_TABLE[1420] = {
     4.47628622567513e-309,   1.216780750623423e-308,  3.307553003638408e-308,
@@ -500,7 +500,7 @@ elem_t my_exp(elem_t x) {
     return val * EXP_TABLE[(unsigned)integer + 710];
 }
 
-void runner(elem_t left[LEN][LEN], elem_t right[LEN][LEN], elem_t tok_pos, elem_t head, elem_t head_size, elem_t out[LEN][LEN]) {
+void runner(elem_t left[LEN][LEN], elem_t right[1][LEN], int tok_pos, int head, int head_size, elem_t out[1][LEN]) {
     for (int time = 0; time < tok_pos; time++) {
         elem_t score = 0;
         for (int i = 0; i < head_size; i++) {
@@ -521,16 +521,14 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t TLeft[LEN][LEN];
-  static elem_t TRight[LEN][LEN];
-  static elem_t TOut[LEN][LEN];
+  static elem_t TLeft[1][LEN];
+  static elem_t TRight[1][LEN];
+  static elem_t TOut[1][LEN];
   int v = 0;
   for (int i = 0; i < LEN; i++) {
-    for (int j = 0; j < LEN; j++) {
-      TLeft[i][j] = v;
-      TRight[i][j] = v;
+      TLeft[0][i] = v;
+      TRight[0][i] = v;
       v++;
-    }
   }
 
   // trigger cycle count
@@ -545,11 +543,11 @@ int main() {
     );
 
   static elem_t Left[LEN][LEN];
-  static elem_t Right[LEN][LEN];
-  static elem_t TokPos;
-  static elem_t Head;
-  static elem_t HeadSize;
-  static elem_t Out[LEN][LEN];
+  static elem_t Right[1][LEN];
+  static int TokPos = LEN;
+  static int Head = 16;
+  static int HeadSize = 208;
+  static elem_t Out[1][LEN];
 
   uint64_t start_g = read_cycles();
   runner(Left, Right, TokPos, Head, HeadSize, Out);

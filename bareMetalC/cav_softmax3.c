@@ -7,15 +7,26 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 200
+#define SIZE 40000
 
-void runner(elem_t left[LEN][LEN], elem_t max_pos, elem_t* out) {
+void runner(elem_t left[1][SIZE], elem_t max_pos, elem_t* out, uint64_t* c1, uint64_t* c2) {
     // take is a no-op
     int size = max_pos;
 
-    // reduce_sum
-    tiled_global_average(left[0], out,
-      1, 1, size, 1);
+  static elem_t unflat[LEN][LEN];
+  int v = 0;
+  for (int i = 0; i < LEN; i++) {
+    for (int j = 0; j < LEN; j++) {
+      unflat[i][j] = left[0][v];
+      v++;
+    }
+  }
+  *c1 = read_cycles();
+  // reduce_sum
+  tiled_global_average(unflat[0], out,
+    1, 1, LEN, 1);
+  *c2 = read_cycles();
 }
 int main() {
 #ifndef BAREMETAL
@@ -29,16 +40,14 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t TLeft[LEN][LEN];
-  static elem_t TRight[LEN][LEN];
-  static elem_t TOut[LEN][LEN];
+  static elem_t TLeft[1][LEN];
+  static elem_t TRight[1][LEN];
+  static elem_t TOut[1][LEN];
   int v = 0;
   for (int i = 0; i < LEN; i++) {
-    for (int j = 0; j < LEN; j++) {
-      TLeft[i][j] = v;
-      TRight[i][j] = v;
+      TLeft[0][i] = v;
+      TRight[0][i] = v;
       v++;
-    }
   }
 
   // trigger cycle count
@@ -52,14 +61,16 @@ int main() {
         WS
     );
 
-  static elem_t Left[LEN][LEN];
+  static elem_t Left[1][SIZE];
   static elem_t MaxPos;
   static elem_t Out;
 
+  uint64_t c1, c2;
   uint64_t start_g = read_cycles();
-  runner(Left, MaxPos, &Out);
+  runner(Left, MaxPos, &Out, &c1, &c2);
   uint64_t end_g = read_cycles();
   printf("Hardware conv took %llu cycles\n", end_g - start_g);
+  printf("Kernel took %llu cycles\n", c2 - c1);
 
   //print1d(Out);
   exit(0);

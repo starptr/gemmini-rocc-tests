@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 315
 
 elem_t muldiv255(elem_t a, elem_t b) {
     return (a * b) / 255;
@@ -25,8 +25,9 @@ void naive_screenBlend8(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t o
     }
 }
 
-void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem_t out[LEN][LEN]) {
+void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem_t out[LEN][LEN], uint64_t* c1, uint64_t* c2, uint64_t* c3, uint64_t* c4) {
     static elem_t Intermediate[LEN][LEN];
+    *c1 = read_cycles();
     tiled_resadd_auto(
         LEN, LEN,
         1, 1,
@@ -36,11 +37,13 @@ void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem
         false,
         WS
     );
+    *c2 = read_cycles();
     for (int i = 0; i < LEN; i++) {
         for (int j = 0; j < LEN; j++) {
             out[i][j] = active[i][j] * base[i][j];
         }
     }
+    *c3 = read_cycles();
     out = GEMMINI_ACC_SCALE(out, 0.0039215686);
     tiled_resadd_auto(
         LEN, LEN,
@@ -51,6 +54,7 @@ void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem
         false,
         WS
     );
+    *c4 = read_cycles();
 }
 int main() {
 #ifndef BAREMETAL
@@ -77,15 +81,18 @@ int main() {
     }
   }
 
-  uint64_t start_cpu = read_cycles();
-  naive_screenBlend8(Left, Right, opacity, Out);
-  uint64_t end_cpu = read_cycles();
-  printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
+  //uint64_t start_cpu = read_cycles();
+  //naive_screenBlend8(Left, Right, opacity, Out);
+  //uint64_t end_cpu = read_cycles();
+  //printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
 
+    uint64_t c1, c2, c3, c4;
   uint64_t start_g = read_cycles();
-  runner(Left, Right, opacity, Out);
+  runner(Left, Right, opacity, Out, &c1, &c2, &c3, &c4);
   uint64_t end_g = read_cycles();
   printf("Hardware conv took %llu cycles\n", end_g - start_g);
+  printf("Kernel1 conv took %llu cycles\n", c2 - c1);
+  printf("Kernel2 conv took %llu cycles\n", c4 - c3);
 
   //print1d(Out);
   exit(0);

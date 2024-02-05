@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 315
 
 elem_t muldiv255(elem_t a, elem_t b) {
     return (a * b) / 255;
@@ -21,7 +21,8 @@ void naive_linearBurn8(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t op
     }
 }
 
-void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem_t out[LEN][LEN]) {
+void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem_t out[LEN][LEN], uint64_t* chkpt1, uint64_t* chkpt2) {
+  *chkpt1 = read_cycles();
     tiled_resadd_auto(
         LEN, LEN,
         opacity, 1 - opacity,
@@ -31,6 +32,7 @@ void runner(elem_t base[LEN][LEN], elem_t active[LEN][LEN], elem_t opacity, elem
         false,
         WS
     );
+  *chkpt2 = read_cycles();
     out = GEMMINI_ACC_SCALE(out, 2);
 }
 int main() {
@@ -58,15 +60,17 @@ int main() {
     }
   }
 
-  uint64_t start_cpu = read_cycles();
-  naive_linearBurn8(Left, Right, opacity, Out);
-  uint64_t end_cpu = read_cycles();
-  printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
+  //uint64_t start_cpu = read_cycles();
+  //naive_linearBurn8(Left, Right, opacity, Out);
+  //uint64_t end_cpu = read_cycles();
+  //printf("CPU conv took %llu cycles\n", end_cpu - start_cpu);
 
+  uint64_t chkpt1, chkpt2;
   uint64_t start_g = read_cycles();
-  runner(Left, Right, opacity, Out);
+  runner(Left, Right, opacity, Out, &chkpt1, &chkpt2);
   uint64_t end_g = read_cycles();
   printf("Hardware conv took %llu cycles\n", end_g - start_g);
+  printf("Kernel took %llu cycles\n",  chkpt2 - chkpt1);
 
   //print1d(Out);
   exit(0);

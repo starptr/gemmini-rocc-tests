@@ -7,7 +7,7 @@
 #include <sys/mman.h>
 #endif
 #include "include/gemmini_testutils.h"
-#define LEN 16
+#define LEN 20000
 
 double EXP_TABLE[1420] = {
     4.47628622567513e-309,   1.216780750623423e-308,  3.307553003638408e-308,
@@ -500,7 +500,7 @@ elem_t my_exp(elem_t x) {
     return val * EXP_TABLE[(unsigned)integer + 710];
 }
 
-void runner(elem_t left[LEN][LEN], elem_t max_pos, elem_t max_val, elem_t out[LEN][LEN]) {
+void runner(elem_t left[1][LEN], int max_pos, elem_t max_val, elem_t out[1][LEN]) {
     // take is a no-op
     int size = max_pos;
 
@@ -520,16 +520,14 @@ int main() {
   printf("Flush Gemmini TLB of stale virtual addresses\n");
   gemmini_flush(0);
 
-  static elem_t TLeft[LEN][LEN];
-  static elem_t TRight[LEN][LEN];
-  static elem_t TOut[LEN][LEN];
+  static elem_t TLeft[1][LEN];
+  static elem_t TRight[1][LEN];
+  static elem_t TOut[1][LEN];
   int v = 0;
   for (int i = 0; i < LEN; i++) {
-    for (int j = 0; j < LEN; j++) {
-      TLeft[i][j] = v;
-      TRight[i][j] = v;
+      TLeft[0][i] = v;
+      TRight[0][i] = v;
       v++;
-    }
   }
 
   // trigger cycle count
@@ -543,10 +541,10 @@ int main() {
         WS
     );
 
-  static elem_t Left[LEN][LEN];
-  static elem_t MaxPos;
+  static elem_t Left[1][LEN];
+  static int MaxPos = LEN;
   static elem_t MaxVal;
-  static elem_t Out[LEN][LEN];
+  static elem_t Out[1][LEN];
 
   uint64_t start_g = read_cycles();
   runner(Left, MaxPos, MaxVal, Out);
